@@ -15,10 +15,10 @@ type MessageProps = {
 export const Message = ({ data, markdown }: MessageProps) => (
   <div
     className={twMerge(
-      'flex max-w-[80%] flex-col gap-2 rounded-xl px-4 py-2',
+      'm-4 my-2 flex max-w-[80%] flex-col gap-2 rounded-xl px-4 py-2',
       data.role === 'user'
-        ? 'self-end bg-foreground text-background'
-        : 'self-start bg-muted'
+        ? 'ml-auto self-end bg-primary text-primary-foreground'
+        : 'mr-auto self-start bg-muted'
     )}
   >
     <Markdown {...markdown}>{data.content}</Markdown>

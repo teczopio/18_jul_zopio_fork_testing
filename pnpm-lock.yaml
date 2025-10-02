@@ -158,6 +158,9 @@ importers:
 
   apps/app:
     dependencies:
+      '@repo/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai
       '@repo/analytics':
         specifier: workspace:*
         version: link:../../packages/analytics
@@ -15868,7 +15871,7 @@ snapshots:
 
   '@types/node-fetch@2.6.12':
     dependencies:
-      '@types/node': 24.0.13
+      '@types/node': 22.16.3
       form-data: 4.0.3
 
   '@types/node@18.19.118':

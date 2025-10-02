@@ -7,8 +7,8 @@
 import { Command } from 'commander';
 import { initialize } from './initialize.js';
 import { update } from './update.js';
+import { aiInit } from './ai.js';
 
-// @ts-expect-error: Command is imported as a type but used as a value
 const program = new Command();
 
 program
@@ -20,7 +20,28 @@ program
     'Package manager to use (npm, yarn, bun, pnpm)'
   )
   .option('--disable-git', 'Disable git initialization')
-  .action(initialize);
+  .option('--ai', 'Use AI-assisted initialization')
+  .option('--non-interactive', 'Run without prompts (AI mode only)')
+  .option('--dry-run', 'Plan only, do not make changes (AI mode only)')
+  .action((options) => {
+    if (options.ai) {
+      return aiInit(options);
+    }
+    return initialize(options);
+  });
+
+program
+  .command('ai-init')
+  .description('AI-assisted initialization for a new zopio project')
+  .option('--name <name>', 'Name of the project')
+  .option(
+    '--package-manager <manager>',
+    'Package manager to use (npm, yarn, bun, pnpm)'
+  )
+  .option('--disable-git', 'Disable git initialization')
+  .option('--non-interactive', 'Run without prompts')
+  .option('--dry-run', 'Plan only, do not make changes')
+  .action(aiInit);
 
 program
   .command('update')

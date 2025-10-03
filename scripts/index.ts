@@ -8,6 +8,7 @@ import { Command } from 'commander';
 import { initialize } from './initialize.js';
 import { update } from './update.js';
 import { aiInit } from './ai.js';
+import { chat } from './chat.js';
 
 const program = new Command();
 
@@ -49,5 +50,10 @@ program
   .option('--from <version>', 'Version to update from e.g. 1.0.0')
   .option('--to <version>', 'Version to update to e.g. 2.0.0')
   .action(update);
+
+program
+  .command('chat')
+  .description('Terminal chat for ZOPIO assistant')
+  .action(chat);
 
 program.parse(process.argv);

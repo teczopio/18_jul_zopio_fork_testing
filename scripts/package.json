@@ -1,6 +1,7 @@
 {
   "type": "commonjs",
   "dependencies": {
-    "fast-glob": "^3.3.3"
+    "fast-glob": "^3.3.3",
+    "@repo/ai": "workspace:*"
   }
 }

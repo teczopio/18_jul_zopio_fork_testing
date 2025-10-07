@@ -2,8 +2,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { type Message, convertToCoreMessages, streamText } from '@repo/ai';
+import {
+  type Message,
+  convertToCoreMessages,
+  streamText,
+  tool,
+} from '@repo/ai';
 import { models } from '@repo/ai/lib/models';
+import { z } from 'zod';
+import { getMcpServer } from '../../mcp/server';
 
 // Precompile once: lightweight intent check for ZOPIO queries
 const ZOPIO_REGEX = /zopio/i;
@@ -144,11 +151,67 @@ Kısa ipucu: Gerektiğinde ön‑koşullara (Node, pnpm/yarn, gerekli CLI’ler)
           model: models.chat,
           messages: convertToCoreMessages(messages),
           system: effectiveSystem,
+          toolChoice: 'auto',
+          tools: {
+            listResources: tool({
+              description:
+                'List available MCP resource types and pagination cursor',
+              parameters: z
+                .object({
+                  cursor: z.string().optional(),
+                  limit: z.number().int().positive().max(100).optional(),
+                })
+                .optional(),
+              execute: (args?: { cursor?: string; limit?: number }) => {
+                const server = getMcpServer();
+                const { cursor, limit } = args ?? {};
+                const res = server.listResources(cursor, limit ?? 50);
+                return Promise.resolve(res);
+              },
+            }),
+            readResource: tool({
+              description: 'Read an MCP resource by type and id',
+              parameters: z.object({ type: z.string(), id: z.string() }),
+              execute: ({ type, id }: { type: string; id: string }) => {
+                const server = getMcpServer();
+                const res = server.handleReadResource(type, id);
+                return Promise.resolve(res);
+              },
+            }),
+          },
         }
       : {
           model: models.chat,
           prompt: prompt ?? '',
           system: effectiveSystem,
+          toolChoice: 'auto',
+          tools: {
+            listResources: tool({
+              description:
+                'List available MCP resource types and pagination cursor',
+              parameters: z
+                .object({
+                  cursor: z.string().optional(),
+                  limit: z.number().int().positive().max(100).optional(),
+                })
+                .optional(),
+              execute: (args?: { cursor?: string; limit?: number }) => {
+                const server = getMcpServer();
+                const { cursor, limit } = args ?? {};
+                const res = server.listResources(cursor, limit ?? 50);
+                return Promise.resolve(res);
+              },
+            }),
+            readResource: tool({
+              description: 'Read an MCP resource by type and id',
+              parameters: z.object({ type: z.string(), id: z.string() }),
+              execute: ({ type, id }: { type: string; id: string }) => {
+                const server = getMcpServer();
+                const res = server.handleReadResource(type, id);
+                return Promise.resolve(res);
+              },
+            }),
+          },
         }
   );
 
